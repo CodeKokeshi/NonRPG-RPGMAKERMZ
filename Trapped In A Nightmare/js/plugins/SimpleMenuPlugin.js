@@ -62,6 +62,8 @@
         if (this.needsCommand("item")) {
             this.addCommand(TextManager.item, "item", enabled);
         }
+        // Add Load Game command to pause menu
+        this.addCommand("Load Game", "load", true);
         // Skip skill, equip, and status commands
     };
 
@@ -155,6 +157,12 @@
         this._commandWindow.setHandler("equip", null); // Remove equip handler
         this._commandWindow.setHandler("formation", null); // Remove formation handler
         this._commandWindow.setHandler("status", null); // Remove status handler
+        this._commandWindow.setHandler("load", this.commandLoad.bind(this)); // Add load handler
+    };
+
+    // Add Load Game command functionality
+    Scene_Menu.prototype.commandLoad = function() {
+        SceneManager.push(Scene_Load);
     };
 
     //=============================================================================
