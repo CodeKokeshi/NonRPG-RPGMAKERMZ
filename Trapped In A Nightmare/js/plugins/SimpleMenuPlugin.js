@@ -58,19 +58,52 @@
     const _Window_MenuCommand_addMainCommands = Window_MenuCommand.prototype.addMainCommands;
     Window_MenuCommand.prototype.addMainCommands = function() {
         const enabled = this.areMainCommandsEnabled();
-        // Only add Item command, skip skill, equip, and status
+        // Add commands in the desired order
+        // 1. Item
         if (this.needsCommand("item")) {
             this.addCommand(TextManager.item, "item", enabled);
         }
-        // Add Load Game command to pause menu
+        // 2. Save Game
+        if (this.needsCommand("save")) {
+            this.addCommand("Save Game", "save", this.isSaveEnabled());
+        }
+        // 3. Load Game
         this.addCommand("Load Game", "load", true);
-        // Skip skill, equip, and status commands
+        // 4. Options
+        if (this.needsCommand("options")) {
+            this.addCommand(TextManager.options, "options", this.isOptionsEnabled());
+        }
+        // 5. Exit (instead of Game End)
+        if (this.needsCommand("gameEnd")) {
+            this.addCommand("Exit", "gameEnd", this.isGameEndEnabled());
+        }
+        // Skip skill, equip, formation, and status commands
     };
 
     // Remove Formation command
     const _Window_MenuCommand_addFormationCommand = Window_MenuCommand.prototype.addFormationCommand;
     Window_MenuCommand.prototype.addFormationCommand = function() {
         // Do nothing - this removes the formation command
+    };
+
+    // Override addOriginalCommands to prevent duplication
+    Window_MenuCommand.prototype.addOriginalCommands = function() {
+        // Do nothing - prevents original commands from being added again
+    };
+
+    // Override addOptionsCommand to prevent duplication 
+    Window_MenuCommand.prototype.addOptionsCommand = function() {
+        // Do nothing - we already added Options in addMainCommands
+    };
+
+    // Override addSaveCommand to prevent duplication
+    Window_MenuCommand.prototype.addSaveCommand = function() {
+        // Do nothing - we already added Save Game in addMainCommands
+    };
+
+    // Override addGameEndCommand to prevent duplication
+    Window_MenuCommand.prototype.addGameEndCommand = function() {
+        // Do nothing - we already added Exit in addMainCommands
     };
 
     //=============================================================================
@@ -158,6 +191,7 @@
         this._commandWindow.setHandler("formation", null); // Remove formation handler
         this._commandWindow.setHandler("status", null); // Remove status handler
         this._commandWindow.setHandler("load", this.commandLoad.bind(this)); // Add load handler
+        // Save, Options, and Game End handlers are already set by the original function
     };
 
     // Add Load Game command functionality
